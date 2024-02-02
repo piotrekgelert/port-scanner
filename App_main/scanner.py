@@ -3,7 +3,6 @@ import os
 import pathlib
 import socket
 import sys
-import threading
 from queue import Queue
 from threading import Thread
 from typing import Any, Iterable
@@ -31,6 +30,14 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
         self.pb_clean_entries.clicked.connect(self.clean_entries)
         self.pb_close_selected.clicked.connect(self.close_selected)
         self.pb_cancel.clicked.connect(self.close)
+        self.lb_message.setText(
+            'Fill entries:\n "{}", "{}", "{}" \nand push "{}" button'.format(
+                self.lb_target_port.text()[:-1],
+                self.lb_ports_amount.text()[:-1],
+                self.lb_threads_amount.text()[:-1],
+                self.pb_apply_to_scan.text()
+            )
+        )
     
     def port_scanner(self, port) -> bool:
         try:
@@ -46,6 +53,11 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
     
     def apply_queue(self) -> None:
         self.fill_queue(list(range(1, int(self.le_ports_amount.text()))))
+        self.lb_message.setText(
+            'Now push "{}" button'.format(
+                self.pb_scan.text()
+            )
+        )
     
     def worker(self) -> None:
         while not self.q.empty():
@@ -54,7 +66,6 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
                 self.open_ports.append(port)
     
     def scan_ports(self) -> Any:
-        self.lb_message.setText('Ports are being scanned, wait until finished')
         for _ in range(int(self.le_threads_amount.text())):
             thread: Thread = Thread(target=self.worker)
             self.threads_ls.append(thread)
@@ -66,18 +77,28 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             tf.join()
         
         self.lb_le_found_ports.setText(str(self.open_ports)[1:-1])
-        self.lb_message.clear()
+        self.lb_message.setText(
+            'Next:\ncopy chosen results from "{}" to "{}"\n'
+            'and push "{}" button or push "{}"\nbutton'.format(
+                self.lb_found_ports.text()[:-1],
+                self.lb_ports_to_del.text()[:-1],
+                self.pb_close_selected.text(),
+                self.pb_close_all.text()
+            )
+        )
     
     def clean_entries(self) -> None:
         self.le_target_port.clear()
         self.le_threads_amount.clear()
         self.le_ports_amount.clear()
-        self.threads_ls.clear
+        self.threads_ls.clear()
     
     def close_all(self) -> Any:
         for op in self.open_ports:
             try:
-                sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock: socket.socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM
+                    )
                 sock.connect((self.le_target_port.text(), op))
                 sock.shutdown(1)
                 sock.close()
@@ -87,10 +108,17 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
     def close_selected(self) -> Any:
         for op in self.le_ports_to_del.text().split(','):
             try:
-                sock: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock: socket.socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM
+                    )
                 sock.connect((self.le_target_port.text(), int(op.strip())))
                 sock.shutdown(1)
-                sock.close()
+                while True:
+                    data = sock.recv(1024)
+                    if not data:
+                        break
+                    sock.sendall(data)
+                # sock.close()
             except:
                 print(f'socket: {op.strip()} didn\'t close')
 

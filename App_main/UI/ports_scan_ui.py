@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_mw_main(object):
     def setupUi(self, mw_main):
         mw_main.setObjectName("mw_main")
-        mw_main.resize(575, 510)
+        mw_main.resize(575, 586)
         font = QtGui.QFont()
         font.setFamily("Comic Sans MS")
         font.setPointSize(12)
@@ -44,7 +44,7 @@ class Ui_mw_main(object):
         self.pb_cancel.setGeometry(QtCore.QRect(450, 410, 111, 31))
         self.pb_cancel.setObjectName("pb_cancel")
         self.lb_message = QtWidgets.QLabel(parent=self.centralwidget)
-        self.lb_message.setGeometry(QtCore.QRect(20, 460, 531, 31))
+        self.lb_message.setGeometry(QtCore.QRect(20, 460, 531, 91))
         self.lb_message.setObjectName("lb_message")
         self.lb_ports_to_del = QtWidgets.QLabel(parent=self.centralwidget)
         self.lb_ports_to_del.setGeometry(QtCore.QRect(50, 320, 141, 31))
