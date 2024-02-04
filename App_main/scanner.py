@@ -28,16 +28,8 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
         self.pb_apply_to_scan.clicked.connect(self.apply_queue)
         self.pb_scan.clicked.connect(self.scan_ports)
         self.pb_clean_entries.clicked.connect(self.clean_entries)
-        self.pb_close_selected.clicked.connect(self.close_selected)
         self.pb_cancel.clicked.connect(self.close)
-        self.lb_message.setText(
-            'Fill entries:\n "{}", "{}", "{}" \nand push "{}" button'.format(
-                self.lb_target_port.text()[:-1],
-                self.lb_ports_amount.text()[:-1],
-                self.lb_threads_amount.text()[:-1],
-                self.pb_apply_to_scan.text()
-            )
-        )
+        Messages.entry_message(self)
     
     def port_scanner(self, port) -> bool:
         try:
@@ -52,12 +44,21 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             self.q.put(x)
     
     def apply_queue(self) -> None:
-        self.fill_queue(list(range(1, int(self.le_ports_amount.text()))))
-        self.lb_message.setText(
-            'Now push "{}" button'.format(
-                self.pb_scan.text()
-            )
-        )
+        if len(
+            self.le_target_port.text()
+            ) and len(
+                self.le_ports_amount.text()
+                ) and len(
+                    self.le_threads_amount.text()
+                ):
+            if '-' in self.le_ports_amount.text():
+                n1, n2 = [int(x) for x in self.le_ports_amount.text().split('-')]
+                self.fill_queue(list(range(n1, n2)))
+            else:
+                self.fill_queue(list(range(1, int(self.le_ports_amount.text()))))
+            Messages.apply(self)
+        else:
+            Messages.forgotten_entries(self)
     
     def worker(self) -> None:
         while not self.q.empty():
@@ -77,116 +78,43 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             tf.join()
         
         self.lb_le_found_ports.setText(str(self.open_ports)[1:-1])
-
-        self.lb_message.setText(
-            'Next:\ncopy chosen results from "{}" to "{}"\n'
-            'and push "{}" button or push "{}"\nbutton'.format(
-                self.lb_found_ports.text()[:-1],
-                self.lb_ports_to_del.text()[:-1],
-                self.pb_close_selected.text(),
-                self.pb_close_all.text()
-            )
-        )
-    
+        Messages.clean(self)
+ 
     def clean_entries(self) -> None:
         self.le_target_port.clear()
         self.le_threads_amount.clear()
         self.le_ports_amount.clear()
         self.threads_ls.clear()
+
+
+
+class Messages(SocketMain):
+    def entry_message(self):
+        self.lb_message.setText(
+            'Fill entries:\n "{}", "{}", "{}" \nand push "{}" button'.format(
+                self.lb_target_port.text()[:-1],
+                self.lb_ports_amount.text()[:-1],
+                self.lb_threads_amount.text()[:-1],
+                self.pb_apply_to_scan.text()
+            )
+        )    
     
-    def close_all(self) -> Any:
-        for op in self.open_ports:
-            try:
-                sock: socket.socket = socket.socket(
-                    socket.AF_INET, socket.SOCK_STREAM
-                    )
-                sock.connect((self.le_target_port.text(), op))
-                sock.shutdown(1)
-                sock.close()
-            except:
-                print(f'socket: {op} didn\'t close')
-    
-    def close_selected(self) -> Any:
-        for op in self.le_ports_to_del.text().split(','):
-            op_int = int(op.strip())
-            try:
-                sock: socket.socket = socket.socket(
-                    socket.AF_INET, socket.SOCK_STREAM
-                    )
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.bind((self.le_target_port.text(), op_int))
-                sock.listen(op_int)
-                conn, addr = sock.accept()
-                conn.close()
-                sock.shutdown(1)
-                sock.close()
-            except Exception as e:
-                self.lb_message.setText(
-                    'socket: {} didn\'t close\n'
-                    'Reason:\n{}'.format(op.strip(), e)
+    def forgotten_entries(self):
+        self.lb_message.setText(
+                'All entries:\n"{}", "{}" and "{}"\n have to be filled in'.format(
+                    self.lb_target_port.text()[:-1],
+                    self.lb_ports_amount.text()[:-1],
+                    self.lb_threads_amount.text()[:-1]
                 )
-                print(f'socket: {op.strip()} didn\'t close')
-                print(f'Reason: {e}')
-            # finally:
-            #     conn.close()
-            #     sock.shutdown(1)
-            #     sock.close()
-
-    def disconnect_selected(self):
-        ...
-
-
-
-
-
-# target = '127.0.0.1'  # '80.111.243.87'
-# ports_amount = 10000
-# threads_amount = 500
-
-
-# ls_ports = list(range(1, ports_amount))
-# q = Queue()
-# open_ports = []
-# ls_threads = []
-
-# def port_scan(port):
-#     try:
-#         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         sock.connect((target, port))
-#         return 1
-#     except:
-#         return 0
-
-
-# def fill_queue(port_ls):
-#     for x in port_ls:
-#         q.put(x)
-
-# fill_queue(ls_ports)
-
-
-# def worker():
-#     while not q.empty():
-#         port  = q.get()
-#         if port_scan(port):
-#             print('port {} is open'.format(port))
-#             open_ports.append(port)
-
-# for _ in range(threads_amount):
-#     thread = threading.Thread(target=worker)
-#     ls_threads.append(thread)
-
-# for ts in ls_threads:
-#     ts.start()
-
-# for tf in ls_threads:
-#     tf.join()
-
-# print('open ports are: ', open_ports)
-
-# socket.shutdown()
-# socket.close()
-
+            )
+    
+    def apply(self):
+        self.lb_message.setText(
+                'Now push "{}" button'.format(
+                    self.pb_scan.text()))
+    
+    def clean(self):
+        self.lb_message.clear()
 
 
 
