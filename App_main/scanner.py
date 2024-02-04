@@ -77,6 +77,7 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             tf.join()
         
         self.lb_le_found_ports.setText(str(self.open_ports)[1:-1])
+
         self.lb_message.setText(
             'Next:\ncopy chosen results from "{}" to "{}"\n'
             'and push "{}" button or push "{}"\nbutton'.format(
@@ -107,20 +108,29 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
     
     def close_selected(self) -> Any:
         for op in self.le_ports_to_del.text().split(','):
+            op_int = int(op.strip())
             try:
                 sock: socket.socket = socket.socket(
                     socket.AF_INET, socket.SOCK_STREAM
                     )
-                sock.connect((self.le_target_port.text(), int(op.strip())))
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                sock.bind((self.le_target_port.text(), op_int))
+                sock.listen(op_int)
+                conn, addr = sock.accept()
+                conn.close()
                 sock.shutdown(1)
-                while True:
-                    data = sock.recv(1024)
-                    if not data:
-                        break
-                    sock.sendall(data)
-                # sock.close()
-            except:
+                sock.close()
+            except Exception as e:
+                self.lb_message.setText(
+                    'socket: {} didn\'t close\n'
+                    'Reason:\n{}'.format(op.strip(), e)
+                )
                 print(f'socket: {op.strip()} didn\'t close')
+                print(f'Reason: {e}')
+            # finally:
+            #     conn.close()
+            #     sock.shutdown(1)
+            #     sock.close()
 
     def disconnect_selected(self):
         ...
