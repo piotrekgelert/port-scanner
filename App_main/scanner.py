@@ -1,16 +1,10 @@
-import json
-import os
-import pathlib
 import socket
 import sys
 from queue import Queue
 from threading import Thread
 from typing import Any, Iterable
 
-import PyQt6.QtGui as qtg
 import PyQt6.QtWidgets as qtw
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget
 from UI.ports_scan_ui import Ui_mw_main  # type: ignore
 
 '''

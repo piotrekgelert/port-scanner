@@ -11,7 +11,7 @@ import PyQt6.QtGui as qtg
 import PyQt6.QtWidgets as qtw
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget
-from UI.ports_scan_ui import Ui_mw_main  # type: ignore
+from UI.ports_scan_ui_old import Ui_mw_main  # type: ignore
 
 '''
 socket.AF_INET -> connection to the internet not unix

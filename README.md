@@ -6,17 +6,15 @@ It checks if you have any open unused port on your computer.
 
 ## ui examples
 <p align="middle">
-  <img src="" width="30%"/>
-  <img src="" width="30%"/>
-  <img src="" width="30%"/>
+  <img src="https://github.com/piotrekgelert/port-scanner/blob/main/images/entry_image.png" width="30%"/>
+  <img src="https://github.com/piotrekgelert/port-scanner/blob/main/images/prepared_to_scan.png" width="30%"/>
+  <img src="https://github.com/piotrekgelert/port-scanner/blob/main/images/found_ports.png" width="30%"/>
 </p>
 
 ### notes
 - [x] scans ports of any given address
-- [x] scans port from the beginning to the chosen number or in given range
-- [x] uses threading for scanning
-- [x] 
-- [x] 
+- [x] scans ports from the beginning to the chosen number or in given range
+- [x] uses multithreading (faster scanning)
 
 ### used packages
 - [PyQt6 6.6.1](https://www.riverbankcomputing.com/software/pyqt/)
