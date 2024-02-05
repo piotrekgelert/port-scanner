@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>509</height>
+    <height>553</height>
    </rect>
   </property>
   <property name="font">
@@ -17,27 +17,14 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Port Scanner</string>
+   <string>Localhost open ports scanner</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pb_cancel">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>330</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Close</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="lb_message">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>380</y>
+      <y>420</y>
       <width>531</width>
       <height>91</height>
      </rect>
@@ -50,7 +37,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>280</y>
+      <y>320</y>
       <width>510</width>
       <height>31</height>
      </rect>
@@ -66,7 +53,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>240</y>
+      <y>280</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -79,41 +66,12 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>20</y>
       <width>511</width>
       <height>31</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="horizontalSpacing">
-      <number>159</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="lb_target_port">
-       <property name="text">
-        <string>Target address:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="le_target_port">
-       <property name="placeholderText">
-        <string>eg: 127.0.0.1</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>90</y>
-      <width>511</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QGridLayout" name="gl_scanned_ports">
      <property name="horizontalSpacing">
       <number>71</number>
      </property>
@@ -137,12 +95,12 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>129</y>
+      <y>110</y>
       <width>511</width>
       <height>31</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_3">
+    <layout class="QGridLayout" name="gl_threads_quantity">
      <property name="horizontalSpacing">
       <number>111</number>
      </property>
@@ -166,12 +124,12 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>200</y>
       <width>511</width>
       <height>33</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_4">
+    <layout class="QGridLayout" name="gl_scan_buttons">
      <property name="horizontalSpacing">
       <number>60</number>
      </property>
@@ -197,6 +155,64 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pb_cancel">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>370</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Close</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_clean_ports">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>370</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="text">
+     <string>Clean open ports</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_scanned_ports_tip">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>511</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tip: scan ports in range: 1 - 65536</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lb_threads_tip">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>511</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tip: more threads faster scan; do not exceed 500 threads</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

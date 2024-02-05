@@ -1,7 +1,7 @@
-# port-scanner
+# localhost-open-ports-scanner
 Port scanner application made in python 3.12 with pyqt6.
 Fast tool to help secure your computer.
-It checks if you have any open unused port on your computer.
+It checks if you have any open unused ports.
 
 
 ## ui examples
@@ -12,7 +12,7 @@ It checks if you have any open unused port on your computer.
 </p>
 
 ### notes
-- [x] scans ports of any given address
+- [x] looks for open ports in localhost IP address
 - [x] scans ports from the beginning to the chosen number or in given range
 - [x] uses multithreading (faster scanning)
 
