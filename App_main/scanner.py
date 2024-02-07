@@ -24,6 +24,7 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
+        qtw.QDialog.setFixedSize(self, 550, 605)
         self.tips_style()
         self.pb_apply_to_scan.clicked.connect(self.apply_queue)
         self.pb_scan.clicked.connect(self.scan_ports)
@@ -81,25 +82,25 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
                     self.fill_queue(list(range(1, n)))
             
             if n1 > 65536 or n2 > 65536 or n > 65536:
-                Messages.exceed_ports_limit(self)
+                Messages.invalid_entries(self, '1')
             else:
                 self.applied_ports = True
                 Messages.apply(self)
         else:
             self.le_ports_amount.clear()
-            Messages.forgotten_entries(self)
+            Messages.invalid_entries(self, '1')
     
     def _threads_limit(self) -> None:
         if len(self.le_threads_amount.text())\
             and self.validate_input(self.le_threads_amount.text()):
             self.threads_nb  = int(self.le_threads_amount.text())
             if self.threads_nb > 500:
-                Messages.exceed_threads_limit(self)
+                Messages.invalid_entries(self, '2')
             else:
                 self.applied_threads = True
         else:
             self.le_threads_amount.clear()
-            Messages.forgotten_entries(self)
+            Messages.invalid_entries(self, '2')
 
     def apply_queue(self) -> None:
         self._ports_limit()
@@ -108,7 +109,7 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
     def worker(self) -> None:
         while not self.q.empty():
             port: Any = self.q.get()
-            if self.port_scanner(port):
+            if self.port_scanner(port) and port not in self.open_ports:
                 self.open_ports.append(port)
     
     def scan_ports(self) -> Any:
@@ -128,7 +129,7 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             self.pb_scan.setDisabled(True)
             Messages.scan_again(self)
         else:
-            Messages.forgotten_entries(self)
+            Messages.invalid_entries(self, '0')
 
     def clean_entries(self) -> None:
         self.le_threads_amount.clear()
@@ -154,42 +155,53 @@ class Messages(SocketMain):
                 self.lb_threads_amount.text()[:-1],
                 self.pb_apply_to_scan.text()
             )
-        )    
+        )
+        self.lb_message.setStyleSheet(
+            'QLabel {color: rgb(0, 0, 0); font: 12pt "Comic Sans MS"}'
+        )
     
-    def forgotten_entries(self):
-        self.lb_message.setText(
-                'Entries:\n"{}" and "{}"\n have to be filled in with positive'
-                ' integers only, next click on \n"{}" button'.format(
-                    self.lb_ports_amount.text()[:-1],
-                    self.lb_threads_amount.text()[:-1],
-                    self.pb_apply_to_scan.text()
-                )
-            )
+    def invalid_entries(self, num: str)-> str:
+        
+        invalid1:dict = {
+            '0': ['Entries:\n"{}" and "{}" are not valid', 
+                'Amount of ports to scan', 'Amount of threads'],
+            '1': ['Entry: "{}" is not valid', 'Amount of ports to scan', None],
+            '2': ['Entry: "{}" is not valid', 'Amount of threads', None],
+        }
+        res: list = invalid1.get(num, 'Invalid')
+        
+        invalid2: dict = {
+            '0': res[0].format(res[1], res[2]),
+            '1': res[0].format(res[1], res[2]),
+            '2': res[0].format(res[1], res[2]),
+
+        }
+        result = invalid2.get(num, 'Invalid')
+        self.lb_message.setText(result)
+        self.lb_message.setStyleSheet(
+            'QLabel {color: rgb(255, 0, 0); font: 12pt "Comic Sans MS"}'
+        )
     
     def apply(self):
         self.lb_message.setText(
                 'Now click on "{}" button'.format(
                     self.pb_scan.text()))
+        self.lb_message.setStyleSheet(
+            'QLabel {color: rgb(0, 0, 0); font: 12pt "Comic Sans MS"}'
+        )
     
     def clean(self):
         self.lb_message.clear()
     
-    def exceed_ports_limit(self):
-        self.lb_message.setText(
-            'The provided number of ports is bigger then max. number of ports'
-            )
-    
-    def exceed_threads_limit(self):
-        self.lb_message.setText(
-            'The provided number of threads is'
-            ' bigger then max. number of threads'
-            )
     def scan_again(self):
         self.lb_message.setText(
             'Scan completed. If you want to scan again,'
             ' first click on\n"{}" button'.format(
                 self.pb_clean_entries.text()
             )
+        )
+        self.lb_message.setStyleSheet(
+            'QLabel {color: rgb(0, 0, 0); font: 12pt "Comic Sans MS"}'
         )
 
 
