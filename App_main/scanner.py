@@ -82,25 +82,25 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
                     self.fill_queue(list(range(1, n)))
             
             if n1 > 65536 or n2 > 65536 or n > 65536:
-                Messages.invalid_entries(self, '1')
+                Messages.invalid_entries(self, 'ports')
             else:
                 self.applied_ports = True
                 Messages.apply(self)
         else:
             self.le_ports_amount.clear()
-            Messages.invalid_entries(self, '1')
+            Messages.invalid_entries(self, 'ports')
     
     def _threads_limit(self) -> None:
         if len(self.le_threads_amount.text())\
             and self.validate_input(self.le_threads_amount.text()):
             self.threads_nb  = int(self.le_threads_amount.text())
             if self.threads_nb > 500:
-                Messages.invalid_entries(self, '2')
+                Messages.invalid_entries(self, 'threads')
             else:
                 self.applied_threads = True
         else:
             self.le_threads_amount.clear()
-            Messages.invalid_entries(self, '2')
+            Messages.invalid_entries(self, 'threads')
 
     def apply_queue(self) -> None:
         self._ports_limit()
@@ -129,7 +129,7 @@ class SocketMain(qtw.QMainWindow, Ui_mw_main):
             self.pb_scan.setDisabled(True)
             Messages.scan_again(self)
         else:
-            Messages.invalid_entries(self, '0')
+            Messages.invalid_entries(self, 'both')
 
     def clean_entries(self) -> None:
         self.le_threads_amount.clear()
@@ -160,20 +160,20 @@ class Messages(SocketMain):
             'QLabel {color: rgb(0, 0, 0); font: 12pt "Comic Sans MS"}'
         )
     
-    def invalid_entries(self, num: str)-> str:
-        
+    def invalid_entries(self, num: str)-> None:
+        ls_st: list = ['Entries:\n"{}" and "{}" are not valid',
+                       'Entry: "{}" is not valid']
         invalid1:dict = {
-            '0': ['Entries:\n"{}" and "{}" are not valid', 
-                'Amount of ports to scan', 'Amount of threads'],
-            '1': ['Entry: "{}" is not valid', 'Amount of ports to scan', None],
-            '2': ['Entry: "{}" is not valid', 'Amount of threads', None],
+            'both': [ls_st[0], 'Amount of ports to scan', 'Amount of threads'],
+            'ports': [ls_st[1], 'Amount of ports to scan', None],
+            'threads': [ls_st[1], 'Amount of threads', None],
         }
         res: list = invalid1.get(num, 'Invalid')
         
         invalid2: dict = {
-            '0': res[0].format(res[1], res[2]),
-            '1': res[0].format(res[1], res[2]),
-            '2': res[0].format(res[1], res[2]),
+            'both': res[0].format(res[1], res[2]),
+            'ports': res[0].format(res[1], res[2]),
+            'threads': res[0].format(res[1], res[2]),
 
         }
         result = invalid2.get(num, 'Invalid')
